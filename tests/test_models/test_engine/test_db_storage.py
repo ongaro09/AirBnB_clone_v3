@@ -67,7 +67,29 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
+    def test_get_method_dbstorage(self):
+        state = State(name="Louisiana")
+        storage.new(state)
+        storage.save()
 
+        retrieved_state = storage.get(State, state.id)
+        self.assertEqual(
+            state, retrieved_state,
+        )
+
+    def test_count_method_dbstorage(self):
+        initial_state_count = storage.count(State)
+        
+        new_state = State(name="Louisiana")
+        storage.new(new_state)
+        storage.save()
+
+        updated_state_count = storage.count(State)
+        self.assertEqual(
+            updated_state_count, initial_state_count + 1,
+        )
+
+            
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
     @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
