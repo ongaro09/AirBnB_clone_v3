@@ -1,17 +1,17 @@
 #!/usr/bin/python3
-"""Handles RESTful API actions related to the link between Place objects and Amenity objects."""
-from flask import jsonify, abort, Blueprint
+"""places_amenities.py"""
+from flask import jsonify, abort
+from flasgger.utils import swag_from
 from api.v1.views import app_views
 from models import storage
-from models.place import Place
 from models.amenity import Amenity
+from models.place import Place
 
-places_amenities = Blueprint('places_amenities', __name__)
 
-
-@places_amenities.route('/places/<place_id>/amenities', methods=['GET'], strict_slashes=False)
-def get_place_amenities(place_id):
-    """Retrieve the list of all Amenity objects of a Place."""
+@app_views.route('/places/<string:place_id>/amenities', methods=['GET'], strict_slashes=False)
+@swag_from('documentation/place_amenity/get_id.yml', methods=['GET'])
+def get_amenities(place_id):
+    """Retrieve all amenities from a place."""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
@@ -19,30 +19,28 @@ def get_place_amenities(place_id):
     return jsonify(amenities)
 
 
-@places_amenities.route('/places/<place_id>/amenities/<amenity_id>', methods=['DELETE'], strict_slashes=False)
-def delete_place_amenity(place_id, amenity_id):
-    """Delete a Amenity object from a Place."""
+@app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>', methods=['DELETE'], strict_slashes=False)
+@swag_from('documentation/place_amenity/delete.yml', methods=['DELETE'])
+def delete_amenity(place_id, amenity_id):
+    """Delete an amenity from a place."""
     place = storage.get(Place, place_id)
     if place is None:
         abort(404)
     amenity = storage.get(Amenity, amenity_id)
-    if amenity is None:
-        abort(404)
-    if amenity not in place.amenities:
+    if amenity is None or amenity not in place.amenities:
         abort(404)
     place.amenities.remove(amenity)
     storage.save()
-    return jsonify({}), 200
+    return jsonify({})
 
 
-@places_amenities.route('/places/<place_id>/amenities/<amenity_id>', methods=['POST'], strict_slashes=False)
-def link_place_amenity(place_id, amenity_id):
-    """Link an Amenity object to a Place."""
+@app_views.route('/places/<string:place_id>/amenities/<string:amenity_id>', methods=['POST'], strict_slashes=False)
+@swag_from('documentation/place_amenity/post.yml', methods=['POST'])
+def post_amenity(place_id, amenity_id):
+    """Link an amenity to a place."""
     place = storage.get(Place, place_id)
-    if place is None:
-        abort(404)
     amenity = storage.get(Amenity, amenity_id)
-    if amenity is None:
+    if place is None or amenity is None:
         abort(404)
     if amenity in place.amenities:
         return jsonify(amenity.to_dict()), 200
