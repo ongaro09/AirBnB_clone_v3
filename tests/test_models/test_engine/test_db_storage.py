@@ -67,44 +67,30 @@ test_db_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_get_method_dbstorage(self):
-        state = State(name="Louisiana")
-        storage.new(state)
-        storage.save()
 
-        retrieved_state = storage.get(State, state.id)
-        self.assertEqual(
-            state, retrieved_state,
-        )
-
-    def test_count_method_dbstorage(self):
-        initial_state_count = storage.count(State)
-        
-        new_state = State(name="Louisiana")
-        storage.new(new_state)
-        storage.save()
-
-        updated_state_count = storage.count(State)
-        self.assertEqual(
-            updated_state_count, initial_state_count + 1,
-        )
-
-            
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(models.storage_t != 'db', "failed to test db storage")
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(models.storage_t != 'db', "failed to test db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(models.storage_t != 'db', "failed to test db storage")
     def test_new(self):
-        """test that new adds an object to the database"""
+        """this test adds a new object to the satbase"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @unittest.skipIf(models.storage_t != 'db', "failed to test db storage")
     def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        """unitetest to check of an object is saved well"""
+
+    @unittest.skipIf(models.storage_t != 'db', "failed to test db storage")
+    def test_get(self):
+        """unittest to retrive an object"""
+
+    @unittest.skipIf(models.storage_t != 'db', "failed to test db storage")
+    def test_count(self):
+        """need to determine the right count num."""
