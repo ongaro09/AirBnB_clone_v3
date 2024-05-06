@@ -1,34 +1,35 @@
 #!/usr/bin/python3
 """States object file"""
-from flask import jsonify, Blueprint, abort, request
+from api.v1.views import app_views
 from models import storage
 from models.state import State
-from api.v1.views import app_views
+from flask import jsonify, Blueprint, abort, request
 
 
 @app_views.route('/states', methods=['GET'], strict_slashes=False)
 def get_states():
-    """returns list of all states"""
-    lizt = []
+    """This function returns a list of all states"""
+    list_of_all_states = []
     states = storage.all(State).values()
     for state in states:
-        lizt.append(state.to_dict())
+        list_of_all_states.append(state.to_dict())
     return jsonify(lizt)
 
 
 @app_views.route('/states/<state_id>', methods=['GET'], strict_slashes=False)
 def get_a_state(state_id):
-    """finds a unique state based on state_id"""
+    """This function finds a unique state based on a unique identifier"""
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    ret = state.to_dict()
-    return jsonify(ret)
+    returned_value = state.to_dict()
+    return jsonify(returned_value)
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/states/<state_id>', methods=['DELETE'],
+                 strict_slashes=False)
 def delete_a_state(state_id):
-    """delete a specific state"""
+    """ This function deletes a specific State"""
     states = storage.get(State, state_id)
     if states is None:
         abort(404)
@@ -39,7 +40,7 @@ def delete_a_state(state_id):
 
 @app_views.route('/states', methods=['POST'], strict_slashes=False)
 def create_a_state():
-    """create a state"""
+    """This function creates a state"""
     req = request.get_json()
     if req is None:
         abort(400, "Not a JSON")
@@ -53,14 +54,14 @@ def create_a_state():
 
 @app_views.route('/states/<state_id>', methods=['PUT'], strict_slashes=False)
 def update_a_state(state_id):
-    """ this method updates a state """
+    """ the function of this method is to update a State """
     state = storage.get(State, state_id)
     if state is None:
         abort(404)
-    req = request.get_json()
-    if req is None:
+    request_val = request.get_json()
+    if request_val is None:
         abort(400, "Not a JSON")
-    for k, value in req.items():
+    for k, value in request_val.items():
         if k not in ['id', 'created_at', 'updated_at']:
             setattr(state, k, value)
     storage.save()
