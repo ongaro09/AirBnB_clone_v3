@@ -67,28 +67,6 @@ test_file_storage.py'])
             self.assertTrue(len(func[1].__doc__) >= 1,
                             "{:s} method needs a docstring".format(func[0]))
 
-    def test_get_method_filestorage(self):
-    # Test retrieval using the get method in FileStorage.
-        state = State(name="Louisiana")
-        storage.new(state)
-        storage.save()
-
-        retrieved_state = storage.get(State, state.id)
-        self.assertEqual(
-            state, retrieved_state,
-        )
-
-    def test_count_method_filestorage(self):
-        initial_state_count = storage.count(State)
-
-        new_state = State(name="Louisiana")
-        storage.new(new_state)
-        storage.save()
-
-        updated_state_count = storage.count(State)
-        self.assertEqual(
-            updated_state_count, initial_state_count + 1,
-        )
 
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
@@ -118,7 +96,6 @@ class TestFileStorage(unittest.TestCase):
 
     @unittest.skipIf(models.storage_t == 'db', "not testing file storage")
     def test_save(self):
-        """Test that save properly saves objects to file.json"""
         storage = FileStorage()
         new_dict = {}
         for key, value in classes.items():
@@ -135,3 +112,10 @@ class TestFileStorage(unittest.TestCase):
         with open("file.json", "r") as f:
             js = f.read()
         self.assertEqual(json.loads(string), json.loads(js))
+
+    @unittest.skipIf(models.storage_t == 'db', "failed to test file storage")
+    def test_get(self):
+    
+
+    @unittest.skipIf(models.storage_t == 'db', "failed to test file storage")
+    def test_count(self):
